@@ -96,7 +96,7 @@ async function createBookings() {
 
   console.log(finalBookings);
 
-  const { error } = await supabase.from("bookings").insert(finalBookings);
+  const { error } = await supabase.from("bookings").insert(finalBookings );
   if (error) console.log(error.message);
 }
 
@@ -136,8 +136,7 @@ function Uploader() {
         display: "flex",
         flexDirection: "column",
         gap: "8px",
-      }}
-    >
+      }}>
       <h3>SAMPLE DATA</h3>
 
       <Button onClick={uploadAll} disabled={isLoading}>
