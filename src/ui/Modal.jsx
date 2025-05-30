@@ -1,4 +1,11 @@
-import { cloneElement, createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  cloneElement,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
@@ -55,26 +62,30 @@ const Button = styled.button`
 
 const ModalContext = createContext();
 
-const Modal = ({children})=>{
-  const [openName , setOpenName] = useState('');
-  
-  const close = ()=> setOpenName("");
-  const open = (name)=> setOpenName(name);
-  
-  return (<ModalContext.Provider value={{ openName , close , open}}>{children}</ModalContext.Provider>)
-}
+const Modal = ({ children }) => {
+  const [openName, setOpenName] = useState("");
 
-const Open = ({children , opens:openWindowName})=>{
-  const {open}= useContext(ModalContext);
-  return cloneElement(children , {onClick:()=>open(openWindowName)});
-}
+  const close = () => setOpenName("");
+  const open = (name) => setOpenName(name);
 
-const Window = ({ children, name}) => {
-const {openName,close} = useContext(ModalContext);
+  return (
+    <ModalContext.Provider value={{ openName, close, open }}>
+      {children}
+    </ModalContext.Provider>
+  );
+};
 
-const ref = useOutsideClick(close);
+const Open = ({ children, opens: openWindowName }) => {
+  const { open } = useContext(ModalContext);
+  return cloneElement(children, { onClick: () => open(openWindowName) });
+};
 
-if(name !== openName) return null;
+const Window = ({ children, name }) => {
+  const { openName, close } = useContext(ModalContext);
+
+  const ref = useOutsideClick(close);
+
+  if (name !== openName) return null;
 
   return createPortal(
     <Overlay>
@@ -82,7 +93,7 @@ if(name !== openName) return null;
         <Button onClick={close}>
           <HiXMark />
         </Button>
-        <div>{cloneElement(children , {onClose:close})}</div>
+        <div>{cloneElement(children, { onClose: close })}</div>
       </StyledModal>
     </Overlay>,
     document.body
