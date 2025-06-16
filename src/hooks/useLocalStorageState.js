@@ -2,8 +2,16 @@ import { useState, useEffect } from "react";
 
 export function useLocalStorageState(initialState, key) {
   const [value, setValue] = useState(function () {
-    const storedValue = localStorage.getItem(key);
-    return storedValue ? JSON.parse(storedValue) : initialState;
+    try {
+      const storedValue = localStorage.getItem(key);
+      if (storedValue === null || storedValue === undefined) {
+        return initialState;
+      }
+      return JSON.parse(storedValue);
+    } catch (error) {
+      console.warn(`Failed to parse localStorage key "${key}":`, error);
+      return initialState;
+    }
   });
 
   useEffect(

@@ -12,56 +12,69 @@ import UseUpdateUser from "./useUpdateUser";
 function UpdateUserDataForm() {
   // We don't need the loading state, and can immediately use the user data, because we know that it has already been loaded at this point
   const {
-    user: {
-      email,
-      user_metadata: { fullName: currentFullName },
-    },
+    user , isLoading
   } = useUser();
 
-  const {updateUser , isUpdating} = UseUpdateUser();
-
+  const {email , user_metadata: { fullName: currentFullName } ,} = user;
+  
+  const { updateUser, isUpdating } = UseUpdateUser();
+  
   const [fullName, setFullName] = useState(currentFullName);
   const [avatar, setAvatar] = useState(null);
-
+  
   function handleSubmit(e) {
     e.preventDefault();
-    if(!fullName) return;
-     updateUser({
-      fullName, avatar
-    }, {onSuccess:()=>{
-      setAvatar(null);
-      e.target.reset();
-    }})
+    if (!fullName) return;
+    updateUser(
+      {
+        fullName,
+        avatar,
+      },
+      {
+        onSuccess: () => {
+          setAvatar(null);
+          e.target.reset();
+        },
+      }
+    );
   }
 
-  function handleCancel(){
+  if(isLoading || !user) return null;
+  
+  function handleCancel() {
     setFullName(currentFullName);
     setAvatar(null);
   }
+  
 
   return (
     <Form onSubmit={handleSubmit}>
-      <FormRow label="Email address">
+      <FormRow label='Email address'>
         <Input value={email} disabled />
       </FormRow>
-      <FormRow label="Full name">
+      <FormRow label='Full name'>
         <Input
-          type="text"
+          type='text'
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          id="fullName"
+          id='fullName'
           disabled={isUpdating}
         />
       </FormRow>
-      <FormRow label="Avatar image">
+      <FormRow label='Avatar image'>
         <FileInput
-          id="avatar"
-          accept="image/*"
+          id='avatar'
+          accept='image/*'
           onChange={(e) => setAvatar(e.target.files[0])}
+          disabled={isUpdating}
         />
       </FormRow>
       <FormRow>
-        <Button type="reset" variation="secondary" onClick={handleCancel} disabled={isUpdating}>
+        <Button
+          type='reset'
+          variation='secondary'
+          onClick={handleCancel}
+          disabled={isUpdating}>
           Cancel
         </Button>
         <Button disabled={isUpdating}>Update account</Button>

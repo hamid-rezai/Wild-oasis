@@ -35,4 +35,4 @@ const UserAvatar = () => {
   )
 }
 
-export default UserAvatar
+export default UserAvatar;
