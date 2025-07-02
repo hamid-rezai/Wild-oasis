@@ -1,4 +1,3 @@
-import React from 'react'
 import BookingDetail from '../features/bookings/BookingDetail';
 
 const Booking = () => {

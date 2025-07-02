@@ -1,0 +1,283 @@
+import styled from "styled-components";
+import { get, useForm } from "react-hook-form";
+
+import Input from "../../ui/Input";
+import Form from "../../ui/Form";
+import Button from "../../ui/Button";
+import FileInput from "../../ui/FileInput";
+import Textarea from "../../ui/Textarea";
+import FormRow from "../../ui/FormRow";
+import useCreateBooking from "./useCreateBooking";
+import useEditBooking from "./useEditBooking";
+import useCabins from "../cabins/useCabins";
+import useGuests from "../guests/useGuests";
+import { subtractDates } from "../../utils/helpers";
+import { useEffect } from "react";
+
+const StyledSelect = styled.select`
+  font-size: 1.4rem;
+  padding: 0.8rem 1.2rem;
+  border: 1px solid
+    ${(props) =>
+      props.type === "white"
+        ? "var(--color-grey-100)"
+        : "var(--color-grey-300)"};
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-grey-0);
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+`;
+
+const FormRow2 = styled.div`
+  display: grid;
+  align-items: center;
+  grid-template-columns: 24rem 1fr 1.2fr;
+  gap: 2.4rem;
+
+  padding: 1.2rem 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--color-grey-100);
+  }
+
+  &:has(button) {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.2rem;
+  }
+`;
+
+const Label = styled.label`
+  font-weight: 500;
+`;
+
+const Error = styled.span`
+  font-size: 1.4rem;
+  color: var(--color-red-700);
+`;
+
+function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setValue,
+    getValues,
+    formState,
+  } = useForm();
+  const { errors } = formState;
+  const { isCreating, createBooking } = useCreateBooking();
+  const { isEditing, editBooking } = useEditBooking();
+  const { cabins } = useCabins();
+  const { isLoading, guests } = useGuests();
+  const { id: editId, ...editValues } = bookingtoEdit;
+  const isEditMode = Boolean(editId);
+
+  const [startDate, endDate, cabinId, numGuests, numNights] = watch([
+    "startDate",
+    "endDate",
+    "cabinId",
+    "numGuests",
+    "numNights",
+  ]);
+  const status = ["Unconfirmed", "Checked-in", "Checked-out"];
+  useEffect(() => {
+    if (!startDate || !endDate) return;
+    const nights = subtractDates(endDate, startDate);
+    setValue("numNights", nights, { shouldValidate: true });
+  }, [startDate, endDate, setValue]);
+
+  useEffect(() => {
+    if (!numNights || !numGuests || !cabinId) return;
+
+    const guestCount = Number(numGuests);
+    if (isNaN(guestCount)) return;
+
+    const cabin = cabins.find((c) => String(c.id) === String(cabinId));
+    if (!cabin) return;
+
+    const reg = Number(cabin?.regularPrice);
+    const discount = Number(cabin?.discount);
+    const rate = reg - discount;
+    const amount = rate * guestCount * numNights;
+    setValue("amount", amount, { shouldValidate: true });
+  }, [numNights, cabinId, cabins, numGuests, setValue]);
+  const today = new Date().toISOString().split("T")[0];
+
+  const isWorking = isCreating || isEditing || isLoading;
+
+  const onSubmit = (data) => {
+    createBooking(
+      { ...data },
+      {
+        onSuccess: (data) => {
+          reset();
+          onClose?.();
+        },
+      }
+    );
+  };
+
+  const onError = (errors) => {
+    console.log(errors);
+  };
+
+  return (
+    <Form
+      type={onClose ? "modal" : "regular"}
+      onSubmit={handleSubmit(onSubmit, onError)}>
+      <FormRow label='Cabin' error={errors?.cabinId?.message}>
+        <StyledSelect
+          disabled={isWorking}
+          id='cabinId'
+          {...register("cabinId", {
+            registered: true,
+            valueAsNumber: true,
+            required: "This field is required",
+          })}>
+          {cabins?.map((option) => (
+            <option key={option.name} value={option.id}>
+              {option.name}
+            </option>
+          ))}
+        </StyledSelect>
+      </FormRow>
+
+      <FormRow label='Guest' error={errors?.guest?.message}>
+        <StyledSelect
+          disabled={isWorking}
+          id='guest'
+          {...register("guest", {
+            registered: true,
+            valueAsNumber: true,
+            required: "This field is required",
+          })}>
+          {guests?.map((option) => (
+            <option key={option.fullName} value={option.value}>
+              {option.fullName}
+            </option>
+          ))}
+        </StyledSelect>
+      </FormRow>
+
+      <FormRow
+        label='Start date'
+        disabled={isWorking}
+        error={errors?.startDate?.message}>
+        <Input
+          type='datetime-local'
+          id='startDate'
+          min={today}
+          {...register("startDate", {
+            required: "This field is required",
+            validate: (value) => {
+              value >= today || "Start date should be today or in the future";
+            },
+          })}
+        />
+      </FormRow>
+
+      <FormRow
+        label='End date'
+        disabled={isWorking}
+        error={errors?.endDate?.message}>
+        <Input
+          type='datetime-local'
+          id='endDate'
+          defaultValue={0}
+          {...register("endDate", {
+            required: "This field is required",
+            validate: (value) =>
+              value <= getValues().endDate ||
+              "End date should be today or in the future",
+          })}
+        />
+      </FormRow>
+
+      <FormRow label='Status' error={errors?.status?.message}>
+        <StyledSelect
+          disabled={isWorking}
+          id='status'
+          {...register("status", {
+            registered: true,
+            valueAsNumber: true,
+            required: "This field is required",
+          })}>
+          {status?.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </StyledSelect>
+      </FormRow>
+
+      <FormRow label='Observations' error={errors?.observation?.message}>
+        <Textarea
+          type='text'
+          id='observation'
+          defaultValue=''
+          {...register("observation", {
+            required: "This field is required",
+          })}
+        />
+      </FormRow>
+
+      <FormRow
+        label='Number of nights'
+        disabled={isWorking}
+        error={errors?.numNights?.message}>
+        <Input
+          type='number'
+          id='numNights'
+          readOnly
+          {...register("numNights", {
+            valueAsNumber: true,
+            required: "This field is required",
+          })}
+        />
+      </FormRow>
+
+      <FormRow
+        label='Number of Guests'
+        disabled={isWorking}
+        error={errors?.numGuests?.message}>
+        <Input
+          type='number'
+          id='numGuests'
+          {...register("numGuests", {
+            valueAsNumber: true,
+            required: "This field is required",
+          })}
+        />
+      </FormRow>
+
+      <FormRow
+        label='Amount'
+        disabled={isWorking}
+        error={errors?.amount?.message}>
+        <Input type='number' id='amount' readOnly {...register("amount")} />
+      </FormRow>
+
+      <FormRow>
+        {/* type is an HTML attribute! */}
+        <Button onClick={() => onClose?.()} variation='secondary' type='reset'>
+          Cancel
+        </Button>
+        <Button disabled={isWorking}>
+          {isEditMode ? "Edit booking" : "Add new booking"}
+        </Button>
+      </FormRow>
+    </Form>
+  );
+}
+
+export default CreateBookingForm;

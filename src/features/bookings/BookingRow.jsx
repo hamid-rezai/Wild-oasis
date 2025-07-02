@@ -121,7 +121,7 @@ function BookingRow({
               Delete Booking
             </Menus.Button>
           </Modal.Open>
-        </Menus.List>
+        </Menus.List> 
       </Menus.Menu>
 
         <Modal.Window name="delete">

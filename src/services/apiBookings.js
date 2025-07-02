@@ -2,29 +2,35 @@ import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { PAGE_SIZE } from "../utils/constants";
 
-
-export async function getBookings({sortBy, filter , page}) {
-  
-  let query = supabase.from("bookings").select("id , created_at, startDate , endDate, numNights, numGuests, status, totalPrice, cabins(name), guests(fullName,email)", {count : "exact"}) 
+export async function getBookings({ sortBy, filter, page }) {
+  let query = supabase
+    .from("bookings")
+    .select(
+      "id , created_at, startDate , endDate, numNights, numGuests, status, totalPrice, cabins(name), guests(fullName,email)",
+      { count: "exact" }
+    );
 
   //Filter
-  if(filter) query = query.eq(filter.field, filter.value)
+  if (filter) query = query.eq(filter.field, filter.value);
 
   //Sort
-  if(sortBy) query = query.order(sortBy.field , {ascending: sortBy.direction==="asc"});
+  if (sortBy)
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
 
   //Pagination
   const from = (page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
-  if (page) query = query.range(from , to )
+  if (page) query = query.range(from, to);
 
-  const {data , error , count} = await query;
+  const { data, error, count } = await query;
 
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
   }
-  return {data , count};
+  return { data, count };
 }
 
 export async function getBooking(id) {
@@ -39,6 +45,45 @@ export async function getBooking(id) {
     throw new Error("Booking not found");
   }
 
+  return data;
+}
+
+export async function getBookingsByGuestId(guestId) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(" * , cabins(*)")
+    .eq("guestId", guestId)
+    .order("startDate", { ascending: true });
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not get loaded");
+  }
+  return data;
+}
+
+export async function getAllBookings() {
+  let { data, error } = await supabase.from("bookings").select("*");
+
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not get loaded");
+  }
+
+  return data;
+}
+
+export async function createEditBookings(newBooking, Id) {
+  // 1. Create/Edit booking
+  let query = supabase.from("bookings");
+  //A) CREATE
+  if (!Id) query = query.insert([newBooking]).select().single();
+  //B) EDIT
+  if (Id) query = query.update(newBooking).eq("id", Id).select().single();
+  const { data, error } = await query;
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be created");
+  }
   return data;
 }
 
