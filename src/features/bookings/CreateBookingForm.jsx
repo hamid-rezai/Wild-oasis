@@ -12,7 +12,10 @@ import useEditBooking from "./useEditBooking";
 import useCabins from "../cabins/useCabins";
 import useGuests from "../guests/useGuests";
 import { subtractDates } from "../../utils/helpers";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Checkbox from "../../ui/Checkbox";
+import useSettings from "../settings/useSettings";
+import Spinner from "../../ui/Spinner";
 
 const StyledSelect = styled.select`
   font-size: 1.4rem;
@@ -64,6 +67,15 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
+const FormGroup = styled.div`
+  display: flex;
+  padding: 1.6rem 0;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  border: 1px yellow solid;
+`;
+
 function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
   const {
     register,
@@ -73,14 +85,20 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
     setValue,
     getValues,
     formState,
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      status: bookingtoEdit.status ?? "Unconfirmed",
+      isPaid: bookingtoEdit.isPaid ?? false,
+    },
+  });
   const { errors } = formState;
-  const { isCreating, createBooking } = useCreateBooking();
+  const { isCreating, createBookings } = useCreateBooking();
   const { isEditing, editBooking } = useEditBooking();
   const { cabins } = useCabins();
   const { isLoading, guests } = useGuests();
   const { id: editId, ...editValues } = bookingtoEdit;
   const isEditMode = Boolean(editId);
+  const { isPending: isLoadingSettings, settings } = useSettings();
 
   const [startDate, endDate, cabinId, numGuests, numNights] = watch([
     "startDate",
@@ -89,7 +107,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
     "numGuests",
     "numNights",
   ]);
-  const status = ["Unconfirmed", "Checked-in", "Checked-out"];
+  const statusOptions = ["Unconfirmed", "Checked-in", "Checked-out"];
   useEffect(() => {
     if (!startDate || !endDate) return;
     const nights = subtractDates(endDate, startDate);
@@ -108,16 +126,27 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
     const reg = Number(cabin?.regularPrice);
     const discount = Number(cabin?.discount);
     const rate = reg - discount;
-    const amount = rate * guestCount * numNights;
-    setValue("amount", amount, { shouldValidate: true });
+    const cabinPrice = rate * guestCount * numNights;
+    setValue("cabinPrice", cabinPrice, { shouldValidate: true });
   }, [numNights, cabinId, cabins, numGuests, setValue]);
   const today = new Date().toISOString().split("T")[0];
 
   const isWorking = isCreating || isEditing || isLoading;
 
+  const baseCabinPrice = getValues("cabinPrice");
+  const hasBreakfast = getValues("hasBreakfast");
+  const breakfastCost = hasBreakfast
+    ? settings.breakfastPrice * numNights * numGuests
+    : 0;
+  const totalPrice = baseCabinPrice + breakfastCost;
+  useEffect(() => {
+    if (hasBreakfast) {
+      setValue("cabinPrice", totalPrice, { shouldValidate: true });
+    }
+  });
   const onSubmit = (data) => {
-    createBooking(
-      { ...data },
+    createBookings(
+      { ...data, totalPrice: totalPrice, extrasPrice: breakfastCost },
       {
         onSuccess: (data) => {
           reset();
@@ -125,12 +154,14 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         },
       }
     );
+    console.log(data);
   };
 
   const onError = (errors) => {
     console.log(errors);
   };
 
+  if (isLoadingSettings) return <Spinner />;
   return (
     <Form
       type={onClose ? "modal" : "regular"}
@@ -152,17 +183,17 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         </StyledSelect>
       </FormRow>
 
-      <FormRow label='Guest' error={errors?.guest?.message}>
+      <FormRow label='Guest' error={errors?.guestId?.message}>
         <StyledSelect
           disabled={isWorking}
-          id='guest'
-          {...register("guest", {
+          id='guestId'
+          {...register("guestId", {
             registered: true,
             valueAsNumber: true,
             required: "This field is required",
           })}>
           {guests?.map((option) => (
-            <option key={option.fullName} value={option.value}>
+            <option key={option.fullName} value={option.id}>
               {option.fullName}
             </option>
           ))}
@@ -209,10 +240,9 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
           id='status'
           {...register("status", {
             registered: true,
-            valueAsNumber: true,
             required: "This field is required",
           })}>
-          {status?.map((option) => (
+          {statusOptions.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
@@ -220,12 +250,12 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         </StyledSelect>
       </FormRow>
 
-      <FormRow label='Observations' error={errors?.observation?.message}>
+      <FormRow label='Observations' error={errors?.observations?.message}>
         <Textarea
           type='text'
-          id='observation'
+          id='observations'
           defaultValue=''
-          {...register("observation", {
+          {...register("observations", {
             required: "This field is required",
           })}
         />
@@ -256,15 +286,42 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
           {...register("numGuests", {
             valueAsNumber: true,
             required: "This field is required",
+            validate: (value) => {
+              const selectedCabin = cabins.find(
+                (c) => c.id === getValues("cabinId")
+              );
+              if (!selectedCabin) return true;
+              return (
+                value <= selectedCabin.maxCapacity ||
+                `Max capacity for this cabin is ${selectedCabin.maxCapacity}`
+              );
+            },
           })}
         />
       </FormRow>
 
       <FormRow
-        label='Amount'
+        label='Total price'
         disabled={isWorking}
-        error={errors?.amount?.message}>
-        <Input type='number' id='amount' readOnly {...register("amount")} />
+        error={errors?.cabinPrice?.message}>
+        <Input
+          type='number'
+          id='cabinPrice'
+          readOnly
+          {...register("cabinPrice")}
+        />
+      </FormRow>
+
+      <FormRow>
+        <Checkbox
+          id='hasBreakfast'
+          disabled={isWorking}
+          {...register("hasBreakfast")}>
+          Include breakfast
+        </Checkbox>
+        <Checkbox id='isPaid' disabled={isWorking} {...register("isPaid")}>
+          Is already paid
+        </Checkbox>
       </FormRow>
 
       <FormRow>

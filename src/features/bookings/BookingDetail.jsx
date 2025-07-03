@@ -41,19 +41,21 @@ function BookingDetail() {
   console.log(booking);
 
   const { status, id: bookingId } = booking;
-
+const rawStatus = booking.status ?? "unconfirmed";
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
   };
+  const tagType = statusToTagName[rawStatus] ?? "blue";
+    const prettyStatus = rawStatus.replace("-","");
 
   return (
     <>
       <Row type='horizontal'>
         <HeadingGroup>
           <Heading as='h1'>Booking #{bookingId}</Heading>
-          <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+          <Tag type={tagType}>{prettyStatus}</Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
       </Row>

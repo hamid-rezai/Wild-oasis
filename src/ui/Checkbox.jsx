@@ -13,29 +13,28 @@ const StyledCheckbox = styled.div`
   }
 
   & input[type="checkbox"]:disabled {
-    accent-color: var(--color-brand-600);
+    accent-color: var(--color-brand-300);
   }
 
   & label {
     flex: 1;
-
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    cursor:pointer;
   }
 `;
 
-function Checkbox({ checked, onChange, disabled = false, id, children }) {
+function Checkbox({ disabled = false, id, children,...rest }) {
   return (
     <StyledCheckbox>
       <input
         type="checkbox"
         id={id}
-        checked={checked}
-        onChange={onChange}
         disabled={disabled}
+        {...rest}
       />
-      <label htmlFor={!disabled ? id : ""}>{children}</label>
+      <label htmlFor={id}>{children}</label>
     </StyledCheckbox>
   );
 }

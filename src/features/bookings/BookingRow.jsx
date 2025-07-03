@@ -42,28 +42,31 @@ const Amount = styled.div`
 `;
 
 function BookingRow({
-  booking: {
-    id: bookingId,
+  booking
+}) {
+  
+  const {id: bookingId,
     created_at,
     startDate,
     endDate,
     numNights,
     numGuests,
     totalPrice,
-    status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
-  },
-}) {
-  const statusToTagName = {
-    unconfirmed: "blue",
-    "checked-in": "green",
-    "checked-out": "silver",
-  };
-
-  const navigate = useNavigate();
-  const {checkout , isCheckingOut} = useCheckout();
-  const {deleteBooking, isDeleting} = useDeleteBooking();
+    status,} = booking;
+    const guestName = booking.guests?.fullName ?? "_";
+    const guestEmail = booking.guests?.email ?? "_";
+    const cabinName = booking.cabins?.name ?? "_";
+    const navigate = useNavigate();
+    const {checkout , isCheckingOut} = useCheckout();
+    const {deleteBooking, isDeleting} = useDeleteBooking();
+    const rawStatus = booking.status ?? "unconfirmed";
+    const statusToTagName = {
+      unconfirmed: "blue",
+      "checked-in": "green",
+      "checked-out": "silver",
+    };
+    const tagType = statusToTagName[rawStatus] ?? "blue";
+    const prettyStatus = rawStatus.replace("-","");
 
   return (
     <Table.Row>
@@ -71,7 +74,7 @@ function BookingRow({
 
       <Stacked>
         <span>{guestName}</span>
-        <span>{email}</span>
+        <span>{guestEmail}</span>
       </Stacked>
 
       <Stacked>
@@ -87,7 +90,7 @@ function BookingRow({
         </span>
       </Stacked>
 
-      <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
+      <Tag type={tagType}>{prettyStatus}</Tag>
 
       <Amount>{formatCurrency(totalPrice)}</Amount>
       <Modal>
