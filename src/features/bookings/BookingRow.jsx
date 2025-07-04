@@ -7,12 +7,13 @@ import Table from "../../ui/Table";
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
 import Menus from "../../ui/Menus";
-import { HiArrowDownOnSquare, HiArrowUpOnSquare, HiEye, HiTrash } from "react-icons/hi2";
+import { HiArrowDownOnSquare, HiArrowUpOnSquare, HiEye, HiPencil, HiTrash } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "../check-in-out/useCheckout";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
 import useDeleteBooking from "./useDeleteBooking";
+import CreateBookingForm from "./CreateBookingForm";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -119,14 +120,24 @@ function BookingRow({
             </Menus.Button>
           )}
 
+          <Modal.Open opens="edit-booking">
+            <Menus.Button icon={<HiPencil/>}>
+              Edit
+            </Menus.Button>
+          </Modal.Open>
+
           <Modal.Open opens="delete">
             <Menus.Button icon={<HiTrash />}>
               Delete Booking
             </Menus.Button>
           </Modal.Open>
+
         </Menus.List> 
       </Menus.Menu>
 
+        <Modal.Window name="edit-booking">
+          <CreateBookingForm bookingtoEdit={booking}/>
+        </Modal.Window>
         <Modal.Window name="delete">
           <ConfirmDelete resourceName="booking" disabled={isDeleting} onConfirm={()=>deleteBooking(bookingId)}/>
         </Modal.Window>

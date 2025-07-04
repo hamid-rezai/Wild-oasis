@@ -77,6 +77,8 @@ const FormGroup = styled.div`
 `;
 
 function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
+  const { id: editId, ...editValues } = bookingtoEdit;
+  const isEditMode = Boolean(editId);
   const {
     register,
     handleSubmit,
@@ -86,47 +88,48 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
     getValues,
     formState,
   } = useForm({
-    defaultValues: {
-      status: bookingtoEdit.status ?? "Unconfirmed",
-      isPaid: bookingtoEdit.isPaid ?? false,
-    },
+    defaultValues: isEditMode
+      ? editValues
+      : {
+          status: bookingtoEdit.status ?? "unconfirmed",
+          isPaid: bookingtoEdit.isPaid ?? false,
+          hasBreakfast: bookingtoEdit.hasBreakfast ?? false,
+        },
   });
   const { errors } = formState;
   const { isCreating, createBookings } = useCreateBooking();
   const { isEditing, editBooking } = useEditBooking();
   const { cabins } = useCabins();
   const { isLoading, guests } = useGuests();
-  const { id: editId, ...editValues } = bookingtoEdit;
-  const isEditMode = Boolean(editId);
   const { isPending: isLoadingSettings, settings } = useSettings();
 
-  const [startDate, endDate, cabinId, numGuests, numNights] = watch([
-    "startDate",
-    "endDate",
-    "cabinId",
-    "numGuests",
-    "numNights",
-  ]);
-  const statusOptions = ["Unconfirmed", "Checked-in", "Checked-out"];
+  const [startDate, endDate, cabinId, numGuests, numNights, hasBreakfastValue] =
+    watch([
+      "startDate",
+      "endDate",
+      "cabinId",
+      "numGuests",
+      "numNights",
+      "hasBreakfast",
+    ]);
+  const statusOptions = ["unconfirmed", "checked-in", "checked-out"];
   useEffect(() => {
     if (!startDate || !endDate) return;
     const nights = subtractDates(endDate, startDate);
     setValue("numNights", nights, { shouldValidate: true });
   }, [startDate, endDate, setValue]);
 
+  const cabin = cabins?.find((c) => String(c.id) === String(cabinId));
+  const guestCount = Number(numGuests);
+  const reg = Number(cabin?.regularPrice);
+  const discount = Number(cabin?.discount);
+  const rate = reg - discount;
+  const cabinPrice = rate * guestCount * numNights;
   useEffect(() => {
     if (!numNights || !numGuests || !cabinId) return;
-
-    const guestCount = Number(numGuests);
     if (isNaN(guestCount)) return;
-
-    const cabin = cabins.find((c) => String(c.id) === String(cabinId));
     if (!cabin) return;
 
-    const reg = Number(cabin?.regularPrice);
-    const discount = Number(cabin?.discount);
-    const rate = reg - discount;
-    const cabinPrice = rate * guestCount * numNights;
     setValue("cabinPrice", cabinPrice, { shouldValidate: true });
   }, [numNights, cabinId, cabins, numGuests, setValue]);
   const today = new Date().toISOString().split("T")[0];
@@ -134,26 +137,46 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
   const isWorking = isCreating || isEditing || isLoading;
 
   const baseCabinPrice = getValues("cabinPrice");
-  const hasBreakfast = getValues("hasBreakfast");
-  const breakfastCost = hasBreakfast
+  const breakfastCost = hasBreakfastValue
     ? settings.breakfastPrice * numNights * numGuests
     : 0;
   const totalPrice = baseCabinPrice + breakfastCost;
-  useEffect(() => {
-    if (hasBreakfast) {
-      setValue("cabinPrice", totalPrice, { shouldValidate: true });
-    }
-  });
+
   const onSubmit = (data) => {
-    createBookings(
-      { ...data, totalPrice: totalPrice, extrasPrice: breakfastCost },
-      {
-        onSuccess: (data) => {
-          reset();
-          onClose?.();
+    const paid = data.status === "unconfirmed" ? false : true;
+    if (isEditMode)
+      editBooking(
+        {
+          newBookingData: {
+            ...data,
+            totalPrice: totalPrice,
+            extrasPrice: breakfastCost,
+            isPaid: paid,
+          },
+          id: editId,
         },
-      }
-    );
+        {
+          onSuccess: (data) => {
+            reset();
+            onClose?.();
+          },
+        }
+      );
+    else
+      createBookings(
+        {
+          ...data,
+          totalPrice: totalPrice,
+          extrasPrice: breakfastCost,
+          isPaid: paid,
+        },
+        {
+          onSuccess: (data) => {
+            reset();
+            onClose?.();
+          },
+        }
+      );
     console.log(data);
   };
 
@@ -307,6 +330,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         <Input
           type='number'
           id='cabinPrice'
+          value={hasBreakfastValue ? totalPrice : cabinPrice}
           readOnly
           {...register("cabinPrice")}
         />
@@ -318,9 +342,6 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
           disabled={isWorking}
           {...register("hasBreakfast")}>
           Include breakfast
-        </Checkbox>
-        <Checkbox id='isPaid' disabled={isWorking} {...register("isPaid")}>
-          Is already paid
         </Checkbox>
       </FormRow>
 

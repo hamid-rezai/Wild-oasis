@@ -47,16 +47,10 @@ const GuestTable = ()=>{
   const page = Number(searchParams.get("page") || 1);
   let pageData,pageCount;
 
-  if(filterValue === "all"){
-    pageData = sortedGuests;
-    pageCount = count;
-  }else {
-
+ 
     const start = (page - 1)*PAGE_SIZE;
     pageData = sortedGuests.slice(start,start+PAGE_SIZE);
-    pageCount = sortedGuests.length;
-
-  }
+    pageCount = count;
   
 
   return (
