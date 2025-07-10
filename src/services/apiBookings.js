@@ -1,4 +1,4 @@
-import { getToday } from "../utils/helpers";
+import { getToday} from "../utils/helpers";
 import supabase from "./supabase";
 import { PAGE_SIZE } from "../utils/constants";
 
@@ -6,7 +6,7 @@ export async function getBookings({ sortBy, filter, page }) {
   let query = supabase
     .from("bookings")
     .select(
-      "id , created_at, startDate , endDate, numNights, numGuests, status, totalPrice, cabins(name), guests(fullName,email)",
+      "id , created_at, startDate , endDate, numNights, numGuests, status, totalPrice,hasBreakfast, cabins(name , id ), guests(fullName,email , id)",
       { count: "exact" }
     );
 
@@ -123,12 +123,14 @@ export async function getStaysAfterDate(date) {
 
 // Activity means that there is a check in or a check out today
 export async function getStaysTodayActivity() {
+   const until = new Date().toISOString();
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
   const { data, error } = await supabase
     .from("bookings")
     .select("*, guests(fullName, nationality, countryFlag)")
-    .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
-    )
+    .gte("created_at", since)
+    .lte("created_at", until)
     .order("created_at");
 
   // Equivalent to this. But by querying this, we only download the data we actually need, otherwise we would need ALL bookings ever created
@@ -139,6 +141,7 @@ export async function getStaysTodayActivity() {
     console.error(error);
     throw new Error("Bookings could not get loaded");
   }
+  console.log(data);
   return data;
 }
 

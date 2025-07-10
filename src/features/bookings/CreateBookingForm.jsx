@@ -77,8 +77,27 @@ const FormGroup = styled.div`
 `;
 
 function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
-  const { id: editId, ...editValues } = bookingtoEdit;
+  const { id: editId } = bookingtoEdit;
   const isEditMode = Boolean(editId);
+  console.log(bookingtoEdit);
+  const initialValues = isEditMode
+    ? {
+        cabinId: bookingtoEdit.cabins.id,
+        guestId: bookingtoEdit.guests.id,
+        startDate: bookingtoEdit.startDate,
+        endDate: bookingtoEdit.endDate,
+        numNights: bookingtoEdit.numNights,
+        numGuests: bookingtoEdit.numGuests,
+        status: bookingtoEdit.status || "unconfirmed",
+        hasBreakfast: bookingtoEdit.hasBreakfast ?? false,
+        isPaid: bookingtoEdit.isPaid ?? false,
+        observations: bookingtoEdit.observations || "",
+      }
+    : {
+        status: bookingtoEdit.status ?? "unconfirmed",
+        isPaid: bookingtoEdit.isPaid ?? false,
+        hasBreakfast: bookingtoEdit.hasBreakfast ?? false,
+      };
   const {
     register,
     handleSubmit,
@@ -87,15 +106,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
     setValue,
     getValues,
     formState,
-  } = useForm({
-    defaultValues: isEditMode
-      ? editValues
-      : {
-          status: bookingtoEdit.status ?? "unconfirmed",
-          isPaid: bookingtoEdit.isPaid ?? false,
-          hasBreakfast: bookingtoEdit.hasBreakfast ?? false,
-        },
-  });
+  } = useForm({ defaultValues: initialValues });
   const { errors } = formState;
   const { isCreating, createBookings } = useCreateBooking();
   const { isEditing, editBooking } = useEditBooking();
@@ -138,7 +149,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
 
   const baseCabinPrice = getValues("cabinPrice");
   const breakfastCost = hasBreakfastValue
-    ? settings.breakfastPrice * numNights * numGuests
+    ? settings?.breakfastPrice * numNights * numGuests
     : 0;
   const totalPrice = baseCabinPrice + breakfastCost;
 
@@ -228,7 +239,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         disabled={isWorking}
         error={errors?.startDate?.message}>
         <Input
-          type='datetime-local'
+          type='date'
           id='startDate'
           min={today}
           {...register("startDate", {
@@ -245,7 +256,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         disabled={isWorking}
         error={errors?.endDate?.message}>
         <Input
-          type='datetime-local'
+          type='date'
           id='endDate'
           defaultValue={0}
           {...register("endDate", {

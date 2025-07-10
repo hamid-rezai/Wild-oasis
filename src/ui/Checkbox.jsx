@@ -25,7 +25,7 @@ const StyledCheckbox = styled.div`
   }
 `;
 
-function Checkbox({ disabled = false, id, children,...rest }) {
+function Checkbox({ disabled = false, id, children,checked,...rest }) {
   return (
     <StyledCheckbox>
       <input

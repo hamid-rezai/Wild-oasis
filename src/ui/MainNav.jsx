@@ -3,6 +3,7 @@ import { FaUsersLine } from "react-icons/fa6";
 import { HiOutlineHome, HiOutlineUsers } from "react-icons/hi";
 import { HiOutlineCalendarDays, HiOutlineCog6Tooth, HiOutlineHomeModern } from "react-icons/hi2";
 import { NavLink } from "react-router-dom";
+import Uploader from "../data/Uploader";
 import styled from "styled-components";
 
 const NavList = styled.ul`
@@ -73,6 +74,8 @@ const MainNav = ()=>{
     <StyledNavLink to="/settings"> <HiOutlineCog6Tooth/> <span>Settings</span> </StyledNavLink>
 </li>
       </NavList>
+
+      <Uploader/>
     
     </nav>
   )
