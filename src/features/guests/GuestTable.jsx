@@ -59,10 +59,10 @@ const GuestTable = ()=>{
     <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
       <Table.Header>
         <div></div>
-        <div>FullName</div>
-        <div>Email</div>
-        <div>NationalID</div>
-        <div>Nationality</div>
+        <div data-label="FullName">FullName</div>
+        <div data-label="Email">Email</div>
+        <div data-label="NationalID">NationalID</div>
+        <div data-label="Nationality">Nationality</div>
         {/* <div>Country Flag</div> */}
         <div></div>
       </Table.Header>

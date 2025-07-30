@@ -3,10 +3,15 @@ import styled from "styled-components";
 
 const StyledTable = styled.div`
   border: 1px solid var(--color-grey-200);
-
   font-size: 1.4rem;
   background-color: var(--color-grey-0);
   border-radius: 7px;
+
+  @media (max-width:768px){
+    & > [role="row"]:first-child {
+      display: none;
+    }
+  }
   
 `;
 
@@ -16,6 +21,35 @@ const CommonRow = styled.div`
   column-gap: 2.4rem;
   align-items: center;
   transition: none;
+  padding: 1.2rem 2.4rem;
+
+   @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr;     /* one column */
+    row-gap: 1rem;
+    padding: 1.6rem;
+    margin-bottom: 2rem;
+    background: var(--color-grey-0);
+    border-bottom: none;
+
+    & > * {
+      position: relative;
+      padding-left: 9rem;
+    }
+    
+
+     & > *::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0.3rem;
+      top: 50%;
+      padding-right: 1rem;
+      transform: translateY(-50%);
+      font-weight: 600;
+      color: var(--color-grey-500);
+      white-space: nowrap;
+    }
+    }
 `;
 
 const StyledHeader = styled(CommonRow)`
@@ -34,6 +68,16 @@ const StyledRow = styled(CommonRow)`
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-grey-100);
+  }
+  @media (max-width: 768px) {
+    border: 1px solid var(--color-grey-100);
+    border-radius: var(--border-radius-md);
+
+    >*:last-child{
+      padding-left: 0;
+      display: flex;
+      justify-content: flex-end;
+    }
   }
 `;
 

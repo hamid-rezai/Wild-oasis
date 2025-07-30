@@ -4,10 +4,14 @@ import styled from 'styled-components';
 const StyledFormRow = styled.div`
   display: grid;
   align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
-  gap: 2.4rem;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-grey-100);
 
-  padding: 1.2rem 0;
+  &>*{
+      width: 100%;
+    }
 
   &:first-child {
     padding-top: 0;
@@ -15,16 +19,29 @@ const StyledFormRow = styled.div`
 
   &:last-child {
     padding-bottom: 0;
+    border-bottom: none;
   }
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-grey-100);
   }
 
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 24rem 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 0;
+
+    /* only make the “actions” row flex */
+    &:has(button) {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1.2rem;
+    }
+    & > * {
+      width: auto;
+    }
   }
 `;
 
@@ -48,4 +65,4 @@ const FormRow = ({label , error,children}) => {
   )
 }
 
-export default FormRow
+export default FormRow;

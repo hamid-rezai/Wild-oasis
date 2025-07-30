@@ -28,4 +28,11 @@ export const formatCurrency = (value) =>
     value
   );
 
+  export function getUTCDaysAgo(days){
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - days);
+    d.setHours(0,0,0,0);
+    return d.toISOString();
+  }
+
   

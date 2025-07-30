@@ -32,8 +32,8 @@ const Header = styled.header`
   justify-content: space-between;
 
   svg {
-    height: 3.2rem;
-    width: 3.2rem;
+    height: 4rem;
+    width: 4rem;
   }
 
   & div:first-child {
@@ -42,6 +42,14 @@ const Header = styled.header`
     gap: 1.6rem;
     font-weight: 600;
     font-size: 1.8rem;
+    
+  }
+
+  & div:first-child svg {
+    @media (max-width: 768px) {
+      height: 6rem;
+      width: 6rem;
+    }
   }
 
   & span {

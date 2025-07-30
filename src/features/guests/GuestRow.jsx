@@ -83,10 +83,10 @@ const GuestRow = ({ guest }) => {
           <TickOrCross hasBooking={hasBooking} />
         </Tooltip>
       </div>
-      <GuestName>{fullName}</GuestName>
-      <div>{email}</div>
-      <div>{nationalID}</div>
-      <div>{nationality}</div>
+      <GuestName data-label="FullName">{fullName}</GuestName>
+      <div data-label="Email">{email}</div>
+      <div data-label="NationalID">{nationalID}</div>
+      <div data-label="Nationality">{nationality}</div>
 
       <Modal>
         <Menus.Menu>

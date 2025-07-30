@@ -14,13 +14,21 @@ import { useDarkMode } from "../../context/DarkModeContext";
 import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
 
 const StyledSalesChart = styled(DashboardBox)`
-  grid-column: 1 / -1;
+  grid-column: span 2;
 
   /* Hack to change grid line colors */
   & .recharts-cartesian-grid-horizontal line,
   & .recharts-cartesian-grid-vertical line {
     stroke: var(--color-grey-300);
   }
+  @media (min-width: 900px){
+    grid-column:span 3;
+  }
+
+  @media (min-width: 1200px){
+    grid-column:span 4;
+  }
+  
 `;
 
 const SalesChart = ({ bookings, numDays }) => {

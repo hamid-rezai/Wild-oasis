@@ -71,14 +71,14 @@ function BookingRow({
 
   return (
     <Table.Row>
-      <Cabin>{cabinName}</Cabin>
+      <Cabin data-label="Cabin">{cabinName}</Cabin>
 
-      <Stacked>
+      <Stacked data-label="Guest">
         <span>{guestName}</span>
         <span>{guestEmail}</span>
       </Stacked>
 
-      <Stacked>
+      <Stacked data-label="Dates">
         <span>
           {isToday(new Date(startDate))
             ? "Today"
@@ -91,9 +91,11 @@ function BookingRow({
         </span>
       </Stacked>
 
-      <Tag type={tagType}>{prettyStatus}</Tag>
+<div data-label="Status">
+      <Tag type={tagType} >{prettyStatus}</Tag>
+</div>
 
-      <Amount>{formatCurrency(totalPrice)}</Amount>
+      <Amount data-label="Amount">{formatCurrency(totalPrice)}</Amount>
       <Modal>
       <Menus.Menu>
         <Menus.Toggle id={bookingId} />

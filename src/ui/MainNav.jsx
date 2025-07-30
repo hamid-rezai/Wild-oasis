@@ -1,9 +1,12 @@
 import { AiOutlineHome } from "react-icons/ai";
 import { FaUsersLine } from "react-icons/fa6";
 import { HiOutlineHome, HiOutlineUsers } from "react-icons/hi";
-import { HiOutlineCalendarDays, HiOutlineCog6Tooth, HiOutlineHomeModern } from "react-icons/hi2";
+import {
+  HiOutlineCalendarDays,
+  HiOutlineCog6Tooth,
+  HiOutlineHomeModern,
+} from "react-icons/hi2";
 import { NavLink } from "react-router-dom";
-import Uploader from "../data/Uploader";
 import styled from "styled-components";
 
 const NavList = styled.ul`
@@ -51,34 +54,49 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
-const MainNav = ()=>{
+const MainNav = () => {
   return (
     <nav>
       <NavList>
-<li>
-    <StyledNavLink to="/dashboard"> <HiOutlineHome/> <span>Home</span> </StyledNavLink>
-</li>
-<li>
-    <StyledNavLink to="/bookings"> <HiOutlineCalendarDays/> <span>Bookings</span> </StyledNavLink>
-</li>
-<li>
-    <StyledNavLink to="/guests"> <FaUsersLine/> <span>Guests</span> </StyledNavLink>
-</li>
-<li>
-    <StyledNavLink to="/cabins"> <HiOutlineHomeModern/> <span>Cabins</span> </StyledNavLink>
-</li>
-<li>
-    <StyledNavLink to="/users"> <HiOutlineUsers/> <span>Users</span> </StyledNavLink>
-</li>
-<li>
-    <StyledNavLink to="/settings"> <HiOutlineCog6Tooth/> <span>Settings</span> </StyledNavLink>
-</li>
+        <li>
+          <StyledNavLink to='/dashboard'>
+            {" "}
+            <HiOutlineHome /> <span>Home</span>{" "}
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/bookings'>
+            {" "}
+            <HiOutlineCalendarDays /> <span>Bookings</span>{" "}
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/guests'>
+            {" "}
+            <FaUsersLine /> <span>Guests</span>{" "}
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/cabins'>
+            {" "}
+            <HiOutlineHomeModern /> <span>Cabins</span>{" "}
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/users'>
+            {" "}
+            <HiOutlineUsers /> <span>Users</span>{" "}
+          </StyledNavLink>
+        </li>
+        <li>
+          <StyledNavLink to='/settings'>
+            {" "}
+            <HiOutlineCog6Tooth /> <span>Settings</span>{" "}
+          </StyledNavLink>
+        </li>
       </NavList>
-
-      <Uploader/>
-    
     </nav>
-  )
-}
+  );
+};
 
 export default MainNav;

@@ -18,6 +18,12 @@ const Img = styled.img`
   object-fit: cover;
   object-position: center;
   transform: scale(1.5) translateX(-7px);
+
+  @media (max-width: 768px) {
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+    
+  }
 `;
 
 const Cabin = styled.div`
@@ -58,13 +64,13 @@ const CabinRow = ({ cabin }) => {
   return (
     <Table.Row>
       <Img src={image} />
-      <Cabin>{name}</Cabin>
-      <div> Fits up to {maxCapacity} guests</div>
-      <Price>{formatCurrency(regularPrice)}</Price>
+      <Cabin data-label="Cabin">{name}</Cabin>
+      <div data-label="Capacity"> Fits up to {maxCapacity} guests</div>
+      <Price data-label="Price">{formatCurrency(regularPrice)}</Price>
       {discount ? (
-        <Discount>{formatCurrency(discount)}</Discount>
+        <Discount data-label="Discount">{formatCurrency(discount)}</Discount>
       ) : (
-        <span style={{ marginLeft: "20px" }}>&mdash;</span>
+        <span data-label="Discount" style={{ marginLeft: "20px" }}>&mdash;</span>
       )}
       <div style={{ display: "flex", gap: "1rem" }}>
 

@@ -23,4 +23,4 @@ const Stats = ({bookings, confirmedStays , numDays , cabinCount}) => {
   )
 }
 
-export default Stats
+export default Stats;

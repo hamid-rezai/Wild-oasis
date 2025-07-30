@@ -1,4 +1,4 @@
-import { getToday} from "../utils/helpers";
+import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { PAGE_SIZE } from "../utils/constants";
 
@@ -6,7 +6,7 @@ export async function getBookings({ sortBy, filter, page }) {
   let query = supabase
     .from("bookings")
     .select(
-      "id , created_at, startDate , endDate, numNights, numGuests, status, totalPrice,hasBreakfast, cabins(name , id ), guests(fullName,email , id)",
+      "id , created_at, startDate , endDate, numNights, numGuests, status, totalPrice,observations,hasBreakfast, cabins(name , id ), guests(fullName,email , id)",
       { count: "exact" }
     );
 
@@ -96,6 +96,8 @@ export async function getBookingsAfterDate(date) {
     .gte("created_at", date)
     .lte("created_at", getToday({ end: true }));
 
+  console.log(data);
+
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
@@ -105,14 +107,17 @@ export async function getBookingsAfterDate(date) {
 }
 
 // Returns all STAYS that are were created after the given date
-export async function getStaysAfterDate(date) {
+export async function getStaysAfterDate(startDateISO , endDateISO) {
   const { data, error } = await supabase
     .from("bookings")
     // .select('*')
     .select("*, guests(fullName)")
-    .gte("startDate", date)
-    .lte("startDate", getToday());
+    .in("status", ["checked-in", "checked-out"])
+    .gte("created_at", startDateISO)
+    .lte("created_at", endDateISO)
+    .order("created_at", { ascending: true });
 
+  console.log(data);
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
@@ -123,7 +128,7 @@ export async function getStaysAfterDate(date) {
 
 // Activity means that there is a check in or a check out today
 export async function getStaysTodayActivity() {
-   const until = new Date().toISOString();
+  const until = new Date().toISOString();
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
   const { data, error } = await supabase

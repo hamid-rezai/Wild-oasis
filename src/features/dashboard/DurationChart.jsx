@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import Heading from "../../ui/Heading";
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { useDarkMode } from "../../context/DarkModeContext";
@@ -8,9 +8,9 @@ const ChartBox = styled.div`
   background-color: var(--color-grey-0);
   border: 1px solid var(--color-grey-100);
   border-radius: var(--border-radius-md);
-
   padding: 2.4rem 3.2rem;
-  grid-column: 3 / span 2;
+  grid-column: span 2;
+  /* ${props=> props.wide && css`grid-column:span 2;`} */
 
   & > *:first-child {
     margin-bottom: 1.6rem;
@@ -19,6 +19,8 @@ const ChartBox = styled.div`
   & .recharts-pie-label-text {
     font-weight: 600;
   }
+
+  
 `;
 
 const startDataLight = [

@@ -58,10 +58,10 @@ const CabinTable = ()=>{
     <Table columns="0.6fr 1.8fr 2.2fr 1fr 1fr 1fr">
       <Table.Header>
         <div></div>
-        <div>Cabin</div>
-        <div>Capacity</div>
-        <div>Price</div>
-        <div>Discount</div>
+        <div data-label="Cabin">Cabin</div>
+        <div data-label="Capacity">Capacity</div>
+        <div data-label="Price">Price</div>
+        <div data-label="Discount">Discount</div>
         <div></div>
       </Table.Header>
       <Table.Body data={filteredCabins} render={(cabin) => (

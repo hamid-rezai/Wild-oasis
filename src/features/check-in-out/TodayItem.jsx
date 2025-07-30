@@ -30,6 +30,7 @@ function TodayItem({ activity }) {
     <StyledTodayItem>
       {status === "unconfirmed" && <Tag type='green'>Arriving</Tag>}{" "}
       {status === "checked-in" && <Tag type='blue'>Departing</Tag>}
+      {status === "checked-out" && <Tag type='yellow'>Departed</Tag>}
       <Flag src={guests.countryFlag} alt={`Flag of ${guests.country}`} />
       <Guest>{guests.fullName}</Guest>
       <div>{numNights} nights</div>
@@ -44,6 +45,9 @@ function TodayItem({ activity }) {
         </Button>
       )}
       {status === "checked-in" && <CheckoutButton bookingId={id} />}
+      {status === "checked-out" && <Button size='small' variation='danger' disabled>
+        check out
+      </Button>}
     </StyledTodayItem>
   );
 }

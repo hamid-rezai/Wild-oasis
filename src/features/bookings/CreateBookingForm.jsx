@@ -31,51 +31,6 @@ const StyledSelect = styled.select`
   box-shadow: var(--shadow-sm);
 `;
 
-const FormRow2 = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
-  gap: 2.4rem;
-
-  padding: 1.2rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-`;
-
-const Error = styled.span`
-  font-size: 1.4rem;
-  color: var(--color-red-700);
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  padding: 1.6rem 0;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  border: 1px yellow solid;
-`;
-
 function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
   const { id: editId } = bookingtoEdit;
   const isEditMode = Boolean(editId);
@@ -143,6 +98,8 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
 
     setValue("cabinPrice", cabinPrice, { shouldValidate: true });
   }, [numNights, cabinId, cabins, numGuests, setValue]);
+  const nowLocal = new Date();
+  const minDateTime = nowLocal.toISOString().slice(0, 16);
   const today = new Date().toISOString().split("T")[0];
 
   const isWorking = isCreating || isEditing || isLoading;
@@ -239,13 +196,14 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         disabled={isWorking}
         error={errors?.startDate?.message}>
         <Input
-          type='date'
+          type='dateTime-local'
           id='startDate'
-          min={today}
+          min={minDateTime}
           {...register("startDate", {
             required: "This field is required",
             validate: (value) => {
-              value >= today || "Start date should be today or in the future";
+              value >= minDateTime ||
+                "Start date should be today or in the future";
             },
           })}
         />
@@ -256,13 +214,14 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         disabled={isWorking}
         error={errors?.endDate?.message}>
         <Input
-          type='date'
+          type='dateTime-local'
           id='endDate'
           defaultValue={0}
+          min={minDateTime}
           {...register("endDate", {
             required: "This field is required",
             validate: (value) =>
-              value <= getValues().endDate ||
+              value >= minDateTime ||
               "End date should be today or in the future",
           })}
         />
@@ -288,7 +247,6 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
         <Textarea
           type='text'
           id='observations'
-          defaultValue=''
           {...register("observations", {
             required: "This field is required",
           })}
