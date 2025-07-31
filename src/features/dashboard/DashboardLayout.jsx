@@ -14,9 +14,15 @@ const StyledDashboardLayout = styled.div`
   grid-template-rows: auto;
   gap: 2.4rem;
 
-   @media (max-width: 768px) {
+  @media (max-width: 480px) {
+    
+  }
+  @media (max-width: 768px) {
+     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.6rem;
   }
+  
+
   
 `;
 

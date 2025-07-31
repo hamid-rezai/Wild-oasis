@@ -13,17 +13,26 @@ const Form = styled.form.attrs((props) => ({ type: props.type || "regular" }))`
       border-radius: var(--border-radius-md);
 
       @media (max-width: 768px) {
-        padding: 1.6rem 2rem;
+        padding: 2rem 2rem;
       }
     `}
 
   ${(props) =>
     props.type === "modal" &&
     css`
-      width: 80rem;
+      width: 100%;
+      max-width: 80rem;
+      margin: 0 auto;
+      background-color: var(--color-grey-0);
+      border-radius: var(--border-radius-md);
+      padding: 4rem 10rem;
+
+      @media (max-width: 768px) {
+        padding: 2rem 4rem;
+        font-size: 1.2rem;
+      }
     `}
-    padding: 2rem;
-  overflow: hidden;
+      overflow-x: auto;
   font-size: 1.4rem;
 `;
 

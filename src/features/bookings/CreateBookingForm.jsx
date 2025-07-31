@@ -1,18 +1,17 @@
 import styled from "styled-components";
-import { get, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { subtractDates } from "../../utils/helpers";
+import { useEffect} from "react";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
-import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
 import useCreateBooking from "./useCreateBooking";
 import useEditBooking from "./useEditBooking";
 import useCabins from "../cabins/useCabins";
 import useGuests from "../guests/useGuests";
-import { subtractDates } from "../../utils/helpers";
-import { useEffect, useState } from "react";
 import Checkbox from "../../ui/Checkbox";
 import useSettings from "../settings/useSettings";
 import Spinner from "../../ui/Spinner";
@@ -98,12 +97,10 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
 
     setValue("cabinPrice", cabinPrice, { shouldValidate: true });
   }, [numNights, cabinId, cabins, numGuests, setValue]);
+
   const nowLocal = new Date();
   const minDateTime = nowLocal.toISOString().slice(0, 16);
-  const today = new Date().toISOString().split("T")[0];
-
   const isWorking = isCreating || isEditing || isLoading;
-
   const baseCabinPrice = getValues("cabinPrice");
   const breakfastCost = hasBreakfastValue
     ? settings?.breakfastPrice * numNights * numGuests

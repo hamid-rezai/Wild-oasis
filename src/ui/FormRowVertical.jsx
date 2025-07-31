@@ -4,7 +4,11 @@ const StyledFormRow = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  padding: 1.2rem 0;
+  padding: 2rem 4rem;
+
+  @media (max-width: 768px){
+    padding: 1.6rem 2rem;
+  }
 `;
 
 const Label = styled.label`

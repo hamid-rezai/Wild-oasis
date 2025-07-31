@@ -6,7 +6,8 @@ const StyledFormRow = styled.div`
   align-items: center;
   grid-template-columns: 1fr;
   gap: 0.8rem;
-  padding: 1rem 0;
+  padding: 1rem 4rem;
+  line-height: 1.3;
   border-bottom: 1px solid var(--color-grey-100);
 
   &>*{
@@ -14,11 +15,11 @@ const StyledFormRow = styled.div`
     }
 
   &:first-child {
-    padding-top: 0;
+    padding-top: 2rem;
   }
 
   &:last-child {
-    padding-bottom: 0;
+    padding-bottom: 2rem;
     border-bottom: none;
   }
 
@@ -31,7 +32,7 @@ const StyledFormRow = styled.div`
     grid-template-columns: 24rem 1fr auto;
     align-items: center;
     gap: 1rem;
-    padding: 1.2rem 0;
+    padding: 1.5rem 2rem;
 
     /* only make the “actions” row flex */
     &:has(button) {
