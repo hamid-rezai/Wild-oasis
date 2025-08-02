@@ -1,22 +1,20 @@
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useMemo } from "react";
+import useDeleteGuest from "./useDeleteGuest";
+import useAllBookings from "../bookings/useAllBookings";
 
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
 import {
-  HiArrowDownOnSquare,
-  HiArrowUpOnSquare,
   HiEye,
   HiPencil,
   HiTrash,
 } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
 import Modal from "../../ui/Modal";
 import ConfirmDelete from "../../ui/ConfirmDelete";
-import useDeleteGuest from "./useDeleteGuest";
 import CreateGuestForm from "./CreateGuestForm";
 import TickOrCross from "../../ui/TickOrCross";
-import useAllBookings from "../bookings/useAllBookings";
-import { useMemo } from "react";
 
 const GuestName = styled.div`
   font-size: 1.6rem;
@@ -47,21 +45,6 @@ const Tooltip = styled.div`
   }
   &:hover::after {
     opacity: 1;
-  }
-`;
-
-const InfoStack = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-
-  & span:first-child {
-    font-weight: 500;
-  }
-
-  & span:last-child {
-    color: var(--color-grey-500);
-    font-size: 1.2rem;
   }
 `;
 

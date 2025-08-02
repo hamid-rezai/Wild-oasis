@@ -39,7 +39,7 @@ const PaginationButton = styled.button`
   justify-content: center;
   gap: 0.4rem;
   padding: 0.6rem 1.2rem;
-  transition: all 0.3s;
+  /* transition: background-color 0.3s; */
 
   &:has(span:last-child) {
     padding-left: 0.4rem;
@@ -83,9 +83,9 @@ function Pagination({count}){
 
   return(
     <StyledPagination>
-    <p>
+    <P>
       Showing <span>{(currentPage - 1) * PAGE_SIZE + 1}</span> to <span>{currentPage === totalPages ? count : currentPage * PAGE_SIZE}</span> of <span>{count}</span> results
-    </p>
+    </P>
 
     <Buttons>
       <PaginationButton onClick={previousPage} disabled={currentPage === 1}>

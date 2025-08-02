@@ -3,7 +3,6 @@ import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { is } from "date-fns/locale";
 
 const FullPage = styled.div`
   height: 100vh;
@@ -17,7 +16,7 @@ const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
 
   // 1. Load the authenticated user
-  const { user, isLoading, isAuthenticated } = useUser();
+  const { isLoading, isAuthenticated } = useUser();
   
   // 2. If the user is not authenticated, redirect to the login page
   useEffect(() => {

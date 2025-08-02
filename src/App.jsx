@@ -31,9 +31,9 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <DarkModeProvider>
+      <GlobalStyles />
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-      <GlobalStyles />
       <BrowserRouter>
         <Routes>
           <Route element={<ProtectedRoute> <AppLayout /> </ProtectedRoute>}>

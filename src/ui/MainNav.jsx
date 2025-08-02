@@ -1,4 +1,3 @@
-import { AiOutlineHome } from "react-icons/ai";
 import { FaUsersLine } from "react-icons/fa6";
 import { HiOutlineHome, HiOutlineUsers } from "react-icons/hi";
 import {
@@ -26,7 +25,7 @@ const StyledNavLink = styled(NavLink)`
     font-size: 1.6rem;
     font-weight: 500;
     padding: 1.2rem 2.4rem;
-    transition: all 0.3s;
+    
   }
 
   /* This works because react-router places the active class on the active NavLink */
@@ -43,7 +42,7 @@ const StyledNavLink = styled(NavLink)`
     width: 2.4rem;
     height: 2.4rem;
     color: var(--color-grey-400);
-    transition: all 0.3s;
+    transition: color 0.3s;
   }
 
   &:hover svg,

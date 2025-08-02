@@ -1,15 +1,14 @@
-import styled from "styled-components";
-import { useForm, useWatch } from "react-hook-form";
+
+import { useForm } from "react-hook-form";
 import countries from "i18n-iso-countries";
 import enLocale from "i18n-iso-countries/langs/en.json";
+import useCreateGuest from "./useCreateGuest";
+import useEditGuest from "./useEditGuest";
 
 import Input from "../../ui/Input";
 import Form from "../../ui/Form";
 import Button from "../../ui/Button";
-import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow";
-import useCreateGuest from "./useCreateGuest";
-import useEditGuest from "./useEditGuest";
 
 
 countries.registerLocale(enLocale);
@@ -17,14 +16,11 @@ countries.registerLocale(enLocale);
 function CreateGuestForm({ guestToEdit = {}, onClose }) {
   const {id:editId , ...editValues} = guestToEdit;
   const isEditMode = Boolean(editId);
-  const { register, handleSubmit,control, watch, reset, getValues, formState } =
+  const { register, handleSubmit, reset, formState } =
     useForm({defaultValues: isEditMode ? editValues : {} });
   const { errors } = formState;
   const { isCreating, createGuests } = useCreateGuest();
-
   const {isEditing , editGuest} = useEditGuest();
-
-  const nationality = useWatch({control,name:"nationality"})
 
   const onSubmit = (data) => {
     const code = countries
@@ -69,7 +65,7 @@ function CreateGuestForm({ guestToEdit = {}, onClose }) {
       <FormRow
         label='Full Name'
         error={errors?.fullName?.message}>
-        <Input type='text' id='fullName' {...register("fullName", {
+        <Input disabled={isCreating || isEditing} type='text' id='fullName' {...register("fullName", {
           required: "This field is required",
         })}/>
       </FormRow>
@@ -77,7 +73,7 @@ function CreateGuestForm({ guestToEdit = {}, onClose }) {
       <FormRow
         label='Email'
         error={errors?.email?.message}>
-        <Input type='email' id='email' {...register("email", {
+        <Input disabled={isCreating || isEditing} type='email' id='email' {...register("email", {
           required: "This field is required",
           pattern: {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -89,7 +85,7 @@ function CreateGuestForm({ guestToEdit = {}, onClose }) {
       <FormRow
         label='National ID'
         error={errors?.nationalID?.message}>
-        <Input type='text' id='nationalID' {...register("nationalID", {
+        <Input disabled={isCreating || isEditing} type='text' id='nationalID' {...register("nationalID", {
           required: "This field is required",
           minLength: {
             value: 10,
@@ -105,7 +101,7 @@ function CreateGuestForm({ guestToEdit = {}, onClose }) {
       <FormRow
         label='Nationality'
         error={errors?.nationality?.message}>
-        <Input type='text' id='nationality' {...register("nationality", {
+        <Input disabled={isCreating || isEditing} type='text' id='nationality' {...register("nationality", {
           required: "This field is required",
           minLength: {
             value: 2,
@@ -121,10 +117,10 @@ function CreateGuestForm({ guestToEdit = {}, onClose }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button onClick={() => onClose?.()} variation='secondary' type='reset'>
+        <Button disabled={isCreating || isEditing} onClick={() => onClose?.()} variation='secondary' type='reset'>
           Cancel
         </Button>
-        <Button>{isEditMode ? "Edit guest" : "Add guest"}</Button>
+        <Button disabled={isCreating || isEditing} >{isEditMode ? "Edit guest" : "Add guest"}</Button>
       </FormRow>
     </Form>
   );

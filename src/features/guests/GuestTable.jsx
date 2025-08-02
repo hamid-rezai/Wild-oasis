@@ -1,13 +1,14 @@
+import { useSearchParams } from "react-router-dom";
+import useGuests from "./useGuests";
+import useAllBookings from "../bookings/useAllBookings";
+import { PAGE_SIZE } from "../../utils/constants";
+
 import Spinner from "../../ui/Spinner";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
-import { useSearchParams } from "react-router-dom";
-import useGuests from "./useGuests";
 import GuestRow from "./GuestRow";
 import Empty from "../../ui/Empty";
 import Pagination from "../../ui/Pagination";
-import useAllBookings from "../bookings/useAllBookings";
-import { PAGE_SIZE } from "../../utils/constants";
 
 
 const GuestTable = ()=>{

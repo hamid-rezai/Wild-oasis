@@ -20,6 +20,7 @@ const FilterButton = styled.button`
     css`
       background-color: var(--color-brand-600);
       color: var(--color-brand-50);
+      transition: background-color 0.3s;
     `}
 
   border-radius: var(--border-radius-sm);
@@ -27,7 +28,6 @@ const FilterButton = styled.button`
   font-size: 1.4rem;
   /* To give the same height as select */
   padding: 0.44rem 0.8rem;
-  transition: all 0.3s;
 
   &:hover:not(:disabled) {
     background-color: var(--color-brand-600);

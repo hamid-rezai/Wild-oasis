@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import DashboardBox from "./DashboardBox";
-import Heading from "../../ui/Heading";
 import {
   Area,
   AreaChart,
@@ -12,6 +10,9 @@ import {
 } from "recharts";
 import { useDarkMode } from "../../context/DarkModeContext";
 import { eachDayOfInterval, format, isSameDay, subDays } from "date-fns";
+
+import DashboardBox from "./DashboardBox";
+import Heading from "../../ui/Heading";
 
 const StyledSalesChart = styled(DashboardBox)`
   grid-column: span 2;

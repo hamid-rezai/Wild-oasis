@@ -12,14 +12,7 @@ const StyledStat = styled.div`
   grid-template-rows: auto auto;
   column-gap: 1.6rem;
   row-gap: 0.4rem;
-  /* @media (max-width: 768px) {
-    padding: 1.2rem;
-    grid-template-columns: 1fr 1fr;
-  }
-  @media (min-width: 768px) and (max-width: 900px) {
-    padding: 1.2rem;
-    grid-template-columns: 1fr 1fr ;
-  } */
+  
 `;
 
 const Icon = styled.div`

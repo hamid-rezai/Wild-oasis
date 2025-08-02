@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Logout from "../features/authentication/Logout";
 import HeaderMenu from "./HeaderMenu";
 import UserAvatar from "../features/authentication/UserAvatar";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
@@ -11,6 +10,7 @@ const StyledHeader=styled.header`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    
     @media (min-width: 768px) {
         padding: 1.2rem 1.6rem;
         justify-content: flex-end;

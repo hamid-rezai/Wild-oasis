@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { HiEllipsisVertical } from "react-icons/hi2";
 import styled from "styled-components";
@@ -36,8 +36,13 @@ const StyledList = styled.ul`
   box-shadow: var(--shadow-md);
   border-radius: var(--border-radius-md);
 
-  right: ${(props) => props.position.x}px;
+  left: ${(props) => props.position.x}px;
   top: ${(props) => props.position.y}px;
+  transform-origin: top right;
+
+  transition: none !important;
+
+  transform: translateX(-100%);
 `;
 
 const StyledButton = styled.button`
@@ -52,6 +57,7 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   gap: 1.6rem;
+  white-space: nowrap;
 
   &:hover {
     background-color: var(--color-grey-50);
@@ -82,22 +88,41 @@ function Menus({ children }) {
   );
 }
 function Toggle({ id }) {
-  const { openId, open, close, setPosition } = useContext(MenusContext);
+  const btnRef = useRef();
+  const { openId, open, close, setPosition } =
+    useContext(MenusContext);
+
+  const syncPosition = () => {
+    if (!btnRef.current) return;
+    const rect = btnRef.current.getBoundingClientRect();
+    setPosition({ x: rect.right, y: rect.bottom + 8 });
+  };
+  useEffect(() => {
+    if (openId === id) {
+      syncPosition();
+      // then subscribe
+      window.addEventListener("scroll", syncPosition, true);
+      window.addEventListener("resize", syncPosition);
+      return () => {
+        window.removeEventListener("scroll", syncPosition, true);
+        window.removeEventListener("resize", syncPosition);
+      };
+    }
+  }, [openId, id]);
 
   const handleClick = (e) => {
     e.stopPropagation();
-    console.log("click");
-
-    const rect = e.target.closest("button").getBoundingClientRect();
+    const btn = e.target.closest("button");
+    const rect = btn.getBoundingClientRect();
     setPosition({
-      x: window.innerWidth - rect.width - rect.x,
-      y: rect.y + rect.height + 8,
+      x: rect.left + window.scrollX,
+      y: rect.bottom + window.scrollY + 8,
     });
     openId === "" || openId !== id ? open(id) : close();
   };
 
   return (
-    <StyledToggle onClick={handleClick}>
+    <StyledToggle ref={btnRef} onClick={handleClick}>
       <HiEllipsisVertical />
     </StyledToggle>
   );
@@ -105,11 +130,10 @@ function Toggle({ id }) {
 
 function List({ id, children }) {
   const { close } = useContext(MenusContext);
-  const ref = useOutsideClick(()=>{
-    console.log("close from click outside")
-    close()}, false);
-
-  
+  const ref = useOutsideClick(() => {
+    console.log("close from click outside");
+    close();
+  }, false);
 
   const { openId, position } = useContext(MenusContext);
   if (openId !== id) return null;
@@ -123,7 +147,7 @@ function List({ id, children }) {
 function Button({ children, icon, onClick }) {
   const { close } = useContext(MenusContext);
   const handleClick = (e) => {
-      close();
+    close();
     onClick(e);
   };
   return (

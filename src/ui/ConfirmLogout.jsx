@@ -10,6 +10,7 @@ const StyledConfirmLogout = styled.div`
   background-color: var(--color-grey-0);
   padding: 3rem 6rem;
   border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
 
   @media (max-width: 768px) {
     width: 30rem; 
