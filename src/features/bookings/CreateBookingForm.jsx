@@ -173,7 +173,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
 
       <FormRow label='Guest' error={errors?.guestId?.message}>
         <StyledSelect
-          disabled={isWorking || isLoading}
+          disabled={isWorking}
           id='guestId'
           {...register("guestId", {
             registered: true,
