@@ -1,32 +1,32 @@
 import { PAGE_SIZE } from "../utils/constants";
-import supabase from "./supabase"
+import supabase from "./supabase";
 
-const getGuests= async ({sortBy, filter,page})=> {
-  let query =  supabase.from("guests").select("*" , {count:"exact"});
+const getGuests = async ({ sortBy, filter, page }) => {
+  let query = supabase.from("guests").select("*", { count: "exact" });
 
   //Filter
-  if(filter) query = query.eq(filter.field,filter.value);
+  if (filter) query = query.eq(filter.field, filter.value);
 
   //Sort
   if (sortBy)
-    query = query.order(sortBy.field , {
-    ascending: sortBy.direction === "asc"})
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
 
   //Pagination
   const from = (page - 1) * PAGE_SIZE;
-  const to = from + PAGE_SIZE -1;
-  if(page) query = query.range(from , to);
+  const to = from + PAGE_SIZE - 1;
+  if (page) query = query.range(from, to);
 
-  const {data , error, count} = await query;
+  const { data, error, count } = await query;
 
   if (error) {
     console.error(error);
-    throw new Error ("Guests could not get loaded");
+    throw new Error("Guests could not get loaded");
   }
-  return {data,count}; 
-}
+  return { data, count };
+};
 export default getGuests;
-
 
 export async function deleteGuests(id) {
   const { error } = await supabase.from("guests").delete().eq("id", id);
@@ -52,11 +52,12 @@ export async function createEditGuests(newGuest, Id) {
   return data;
 }
 
-  export async function getSingleGuest(id) {
+export async function getSingleGuest(id) {
   const { data, error } = await supabase
     .from("guests")
-    .select("*").eq("id",id).single();
-    
+    .select("*")
+    .eq("id", id)
+    .single();
 
   if (error) {
     console.error(error);

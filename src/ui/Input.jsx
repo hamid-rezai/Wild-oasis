@@ -10,6 +10,24 @@ const Input = styled.input`
   width: 100%;
   max-width: 100%;
 
+  &::-webkit-calendar-picker-indicator {
+    
+    background-color: none;
+    color: var(--color-grey-900);
+    cursor: pointer;
+    
+  }
+
+   /* light mode: icon stays black */
+  :root.light-mode &::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+  }
+
+  /* dark mode: invert to white */
+  :root.dark-mode &::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(1.2);
+  }
+
   @media (max-width: 768px) {
     font-size: 1.2rem;
     padding: 0.6rem 1rem;
