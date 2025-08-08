@@ -65,7 +65,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
   const { isCreating, createBookings } = useCreateBooking();
   const { isEditing, editBooking } = useEditBooking();
   const { cabins } = useCabins();
-  const { isLoading, guests } = useGuests();
+  const { isPending:isLoading, guests } = useGuests();
   const { isPending: isLoadingSettings, settings } = useSettings();
 
   const [startDate, endDate, cabinId, numGuests, numNights, hasBreakfastValue] =
@@ -173,7 +173,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
 
       <FormRow label='Guest' error={errors?.guestId?.message}>
         <StyledSelect
-          disabled={isWorking}
+          disabled={isWorking || isLoading}
           id='guestId'
           {...register("guestId", {
             registered: true,
