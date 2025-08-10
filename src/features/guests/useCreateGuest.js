@@ -9,7 +9,7 @@ const useCreateGuest = () => {
     mutationFn: createEditGuests,
     onSuccess:()=>{
       toast.success("New guest successfully created");
-      queryClient.invalidateQueries({queryKey:['Guests']});
+      queryClient.invalidateQueries({queryKey:['guests']});
     }
     ,
     onError: (error) => {

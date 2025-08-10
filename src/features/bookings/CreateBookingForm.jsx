@@ -65,7 +65,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
   const { isCreating, createBookings } = useCreateBooking();
   const { isEditing, editBooking } = useEditBooking();
   const { cabins } = useCabins();
-  const { isPending:isLoading, guests } = useGuests();
+  const { isPending, guests } = useGuests({ all: true });
   const { isPending: isLoadingSettings, settings } = useSettings();
 
   const [startDate, endDate, cabinId, numGuests, numNights, hasBreakfastValue] =
@@ -100,7 +100,7 @@ function CreateBookingForm({ bookingtoEdit = {}, onClose }) {
 
   const nowLocal = new Date();
   const minDateTime = nowLocal.toISOString().slice(0, 16);
-  const isWorking = isCreating || isEditing || isLoading;
+  const isWorking = isCreating || isEditing;
   const baseCabinPrice = getValues("cabinPrice");
   const breakfastCost = hasBreakfastValue
     ? settings?.breakfastPrice * numNights * numGuests

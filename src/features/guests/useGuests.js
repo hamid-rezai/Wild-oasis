@@ -3,10 +3,15 @@ import getGuests from "../../services/apiGuests";
 import { useSearchParams } from "react-router-dom";
 import { PAGE_SIZE } from "../../utils/constants";
 
-const useGuests = () => {
+const useGuests = ({all=false}={}) => {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
 
+  let filter = null ;
+  let sortBy = { field: "fullName", direction: "asc" };
+  let page=undefined;
+
+  if (!all){
   //Filter
   const filterValue = searchParams.get("booking");
   const filter =
@@ -22,19 +27,20 @@ const useGuests = () => {
 
   //Pagination
   const page = filterValue === "all" ? Number(searchParams.get("page") || 1): null;
-
+  }
   const {
     isPending,
     data: result,
     error,
   } = useQuery({
-    queryKey: ["guests", filterValue, sortBy, page],
-    queryFn: () => getGuests({ filter:null, sortBy, page }),
+    queryKey: all ? ["guests-all"] : ["guests" , filter, sortBy, page],
+      queryFn: () => getGuests({ filter, sortBy, page:all ? undefined : page }),
   });
 
   const guests = result?.data ?? [];
   const count = result?.count ?? 0;
 
+  if(!all){
   //Prefetching
   const totalPages = Math.ceil(count / PAGE_SIZE);
   if (page < totalPages)
@@ -48,6 +54,7 @@ const useGuests = () => {
       queryKey: ["guests", filter, sortBy, page - 1],
       queryFn: () => getGuests({ filter, sortBy, page: page - 1 }),
     });
+    }
 
   return {
     isPending,
